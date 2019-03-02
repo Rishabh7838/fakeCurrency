@@ -1,6 +1,7 @@
 package com.example.rish.detect_currency;
 
 import android.Manifest;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
@@ -18,6 +19,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
@@ -48,15 +50,18 @@ public class MainActivity extends AppCompatActivity {
             Manifest.permission.READ_EXTERNAL_STORAGE,
             Manifest.permission.CAMERA};
     private Intent intent =null;
-    private 
+    private ProgressDialog progressDialog = null;
+    private TextView ansTV;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
             intent = getIntent();
+            progressDialog = new ProgressDialog(MainActivity.this);
         uploadButton = findViewById(R.id.UploadButton);
         noteImage = findViewById(R.id.NoteImage);
+        ansTV = findViewById(R.id.ansTV);
 
         ActivityCompat.requestPermissions(MainActivity.this, Permissions, 1);
         uploadButton.setOnClickListener(new View.OnClickListener() {
@@ -174,6 +179,11 @@ public class MainActivity extends AppCompatActivity {
                             }
 
                             else {
+
+                                progressDialog.setMessage("Checking note...");
+                                progressDialog.setCancelable(false);
+                                progressDialog.setCanceledOnTouchOutside(false);
+                                progressDialog.show();
                                 MultipartBody.Part filePart = MultipartBody.Part.createFormData("image", file.getName(), RequestBody.create(MediaType.parse("image/*"), file));
 
                                 SendPhotoService sendPhotoService = RetrtofitInstance.getService();
@@ -194,12 +204,16 @@ public class MainActivity extends AppCompatActivity {
                                     @Override
                                     public void onResponse(Call<QueryResponse> call, Response<QueryResponse> response) {
                                         Log.e("Hello", "badiya");
+                                        progressDialog.dismiss();
+                                        ansTV.setText(Float.parseFloat(response.body().getValue().toString())*100+" ");
                                         Toast.makeText(MainActivity.this, "value = "+response.body().getValue(), Toast.LENGTH_SHORT).show();
+
                                     }
 
                                     @Override
                                     public void onFailure(Call<QueryResponse> call, Throwable t) {
                                         Log.e("sorry", "babes = " + t.getMessage());
+                                        progressDialog.dismiss();
                                     }
                                 });
 
