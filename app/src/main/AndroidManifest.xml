@@ -32,6 +32,7 @@
         <activity android:name=".UserFormActivity"></activity>
         <activity android:name=".ImagePreview" />
         <activity android:name=".SplashActivity"
+            android:noHistory="true"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
