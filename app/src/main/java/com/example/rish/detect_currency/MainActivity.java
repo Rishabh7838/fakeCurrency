@@ -38,6 +38,7 @@ import retrofit2.Retrofit;
 
 public class MainActivity extends AppCompatActivity {
     private static final int GALLERY =1,CAMERA = 0,PREVIEW=2 ;
+    private static final String TAG = MainActivity.class.getSimpleName();
     private Button uploadButton;
     private Uri uri = null;
     private PhotoDialog photoDialog;
@@ -151,10 +152,17 @@ public class MainActivity extends AppCompatActivity {
                     break;
                 case PREVIEW:
                     if(data!=null) {
-                        Uri resultUri = Uri.parse(data.getStringExtra("Uri"));
+                        final Uri resultUri = Uri.parse(data.getStringExtra("Uri"));
                         uri = resultUri;
 //                        Glide.with(MainActivity.this).from(uri.toString()).into(noteImage);
                         noteImage.setImageURI(uri);
+                        uploadButton.setVisibility(View.VISIBLE);
+                        uploadButton.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                uploadImage(resultUri);
+                            }
+                        });
                        // newCoverPic = resultUri.toString();
                         //String caption = data.getStringExtra("Caption");
                         //String profile = userDetailsModel.ProfilePic;
@@ -163,48 +171,7 @@ public class MainActivity extends AppCompatActivity {
                         Bitmap image = bundle.getParcelable("Image");
                         String caption = bundle.getString("Caption");
                        */
-                        Bitmap image = null;
-                        try {
-                            image = MediaStore.Images.Media.getBitmap(this.getContentResolver(), resultUri);
-                            File file = new File(resultUri.getPath());
-                            if(intent.hasExtra("Activity")){
-                                Toast.makeText(this, "Thanks for your valuable contribution", Toast.LENGTH_SHORT).show();
-                            }
 
-                            else {
-                                MultipartBody.Part filePart = MultipartBody.Part.createFormData("image", file.getName(), RequestBody.create(MediaType.parse("image/*"), file));
-
-                                SendPhotoService sendPhotoService = RetrtofitInstance.getService();
-//                            Call<String> call = sendPhotoService.detectNote("");
-//                            call.enqueue(new Callback<String>() {
-//                                             @Override
-//                                             public void onResponse(Call<String> call, Response<String> response) {
-//                                                 Log.e("Hello","babes");
-//                                             }
-//
-//                                             @Override
-//                                             public void onFailure(Call<String> call, Throwable t) {
-//                                                 Log.e("sorry","babes = "+t.getMessage());
-//                                             }
-//                                         });
-                                Call<QueryResponse> call = sendPhotoService.detectNote(filePart);
-                                call.enqueue(new Callback<QueryResponse>() {
-                                    @Override
-                                    public void onResponse(Call<QueryResponse> call, Response<QueryResponse> response) {
-                                        Log.e("Hello", "badiya");
-                                        Toast.makeText(MainActivity.this, "value = "+response.body().getValue(), Toast.LENGTH_SHORT).show();
-                                    }
-
-                                    @Override
-                                    public void onFailure(Call<QueryResponse> call, Throwable t) {
-                                        Log.e("sorry", "babes = " + t.getMessage());
-                                    }
-                                });
-
-                            }
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
                     //    SaveData(image, caption, profile, username);
                     }
                     break;
@@ -250,6 +217,56 @@ public class MainActivity extends AppCompatActivity {
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    private void uploadImage(Uri resultUri){
+        Log.d(TAG, "uploadImage:");
+
+        Bitmap image = null;
+        try {
+            image = MediaStore.Images.Media.getBitmap(this.getContentResolver(), resultUri);
+            File file = new File(resultUri.getPath());
+
+            if(intent.hasExtra("Activity")){
+                Toast.makeText(this, "Thanks for your valuable contribution", Toast.LENGTH_SHORT).show();
+            } else {
+                Log.d(TAG, "uploadImage: uploading");
+                MultipartBody.Part filePart = MultipartBody.Part.createFormData("image", file.getName(), RequestBody.create(MediaType.parse("image/*"), file));
+
+                SendPhotoService sendPhotoService = RetrtofitInstance.getService();
+//                            Call<String> call = sendPhotoService.detectNote("");
+//                            call.enqueue(new Callback<String>() {
+//                                             @Override
+//                                             public void onResponse(Call<String> call, Response<String> response) {
+//                                                 Log.e("Hello","babes");
+//                                             }
+//
+//                                             @Override
+//                                             public void onFailure(Call<String> call, Throwable t) {
+//                                                 Log.e("sorry","babes = "+t.getMessage());
+//                                             }
+//                                         });
+                Call<QueryResponse> call = sendPhotoService.detectNote(filePart);
+                call.enqueue(new Callback<QueryResponse>() {
+                    @Override
+                    public void onResponse(Call<QueryResponse> call, Response<QueryResponse> response) {
+                        Log.e("Hello", "badiya");
+                        Toast.makeText(MainActivity.this, "value = "+response.body().getValue(), Toast.LENGTH_SHORT).show();
+                    }
+
+                    @Override
+                    public void onFailure(Call<QueryResponse> call, Throwable t) {
+                        Log.d(TAG, "onFailure:");
+                        Log.e("sorry", "babes = " + t.getMessage());
+                    }
+                });
+            }
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+
     }
 
 
