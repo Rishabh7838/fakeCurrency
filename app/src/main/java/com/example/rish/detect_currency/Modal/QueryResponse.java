@@ -5,7 +5,15 @@ import com.google.gson.annotations.SerializedName;
 
 public class QueryResponse  {
 
-    @SerializedName("page")
+    @SerializedName("value")
     @Expose
-    private String  ans;
+    private String  value;
+
+    public String getValue() {
+        return value;
+    }
+
+    public void setValue(String value) {
+        this.value = value;
+    }
 }

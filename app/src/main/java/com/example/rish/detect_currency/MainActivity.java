@@ -48,6 +48,7 @@ public class MainActivity extends AppCompatActivity {
             Manifest.permission.READ_EXTERNAL_STORAGE,
             Manifest.permission.CAMERA};
     private Intent intent =null;
+    private 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -168,12 +169,12 @@ public class MainActivity extends AppCompatActivity {
                         try {
                             image = MediaStore.Images.Media.getBitmap(this.getContentResolver(), resultUri);
                             File file = new File(resultUri.getPath());
-                            if(intent!=null){
+                            if(intent.hasExtra("Activity")){
                                 Toast.makeText(this, "Thanks for your valuable contribution", Toast.LENGTH_SHORT).show();
                             }
 
                             else {
-                                MultipartBody.Part filePart = MultipartBody.Part.createFormData("file", file.getName(), RequestBody.create(MediaType.parse("image/*"), file));
+                                MultipartBody.Part filePart = MultipartBody.Part.createFormData("image", file.getName(), RequestBody.create(MediaType.parse("image/*"), file));
 
                                 SendPhotoService sendPhotoService = RetrtofitInstance.getService();
 //                            Call<String> call = sendPhotoService.detectNote("");
@@ -192,7 +193,8 @@ public class MainActivity extends AppCompatActivity {
                                 call.enqueue(new Callback<QueryResponse>() {
                                     @Override
                                     public void onResponse(Call<QueryResponse> call, Response<QueryResponse> response) {
-                                        Log.e("Hello", "babes");
+                                        Log.e("Hello", "badiya");
+                                        Toast.makeText(MainActivity.this, "value = "+response.body().getValue(), Toast.LENGTH_SHORT).show();
                                     }
 
                                     @Override

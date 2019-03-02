@@ -5,7 +5,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class RetrtofitInstance {
     private static Retrofit retrofit = null;
-    private static String  BaseUrl = "http://18.188.20.76:3000/";
+    private static String  BaseUrl = "http://192.168.0.4:3000/";
 
     public static SendPhotoService getService(){
 
