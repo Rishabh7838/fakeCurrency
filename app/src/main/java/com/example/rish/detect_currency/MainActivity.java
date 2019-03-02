@@ -48,8 +48,6 @@ public class MainActivity extends AppCompatActivity {
             Manifest.permission.READ_EXTERNAL_STORAGE,
             Manifest.permission.CAMERA};
     private Intent intent =null;
-    private 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -59,7 +57,7 @@ public class MainActivity extends AppCompatActivity {
         noteImage = findViewById(R.id.NoteImage);
 
         ActivityCompat.requestPermissions(MainActivity.this, Permissions, 1);
-        uploadButton.setOnClickListener(new View.OnClickListener() {
+        noteImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 photoDialog = new PhotoDialog(MainActivity.this);

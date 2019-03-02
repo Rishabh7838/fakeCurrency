@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="com.example.rish.detect_currency.UserFormActivity"
-    android:background="@drawable/bgg">
+    android:background="@color/blue_grey_900">
 
     <LinearLayout
         android:gravity="center"

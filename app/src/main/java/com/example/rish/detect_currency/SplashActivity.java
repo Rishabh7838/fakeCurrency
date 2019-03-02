@@ -2,6 +2,7 @@ package com.example.rish.detect_currency;
 
 import android.content.Intent;
 import android.os.Build;
+import android.os.Handler;
 import android.support.annotation.RequiresApi;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -43,14 +44,15 @@ public class SplashActivity extends AppCompatActivity {
 //        });
         l1.setAnimation(uptodown);
         l2.setAnimation(downtoup);
-        l1.animate().alpha(0).setDuration(3000).withEndAction(new Runnable() {
+        final Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
             @Override
             public void run() {
-                Intent i = new Intent(SplashActivity.this,MainActivity.class);
-                startActivity(i);
-                finish();
+                Intent signInIntent = new Intent(getApplicationContext(), MainActivity.class);
+                startActivity(signInIntent);
+                // buttons[inew][jnew].setBackgroundColor(Color.BLACK);
             }
-        });
+        }, 3000);
     }
 
 }

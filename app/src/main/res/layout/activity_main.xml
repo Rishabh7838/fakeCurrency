@@ -4,26 +4,27 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/blue_grey_900"
     tools:context=".MainActivity">
 
     <ImageView
         android:id="@+id/NoteImage"
-        android:layout_width="200dp"
-        android:layout_height="200dp"
+        android:layout_width="300dp"
+        android:layout_height="300dp"
         android:scaleType="fitXY"
-        android:src="@drawable/ic_assignment_ind_black_24dp"
+        android:src="@drawable/import_image"
         android:layout_centerInParent="true"
         />
     <Button
         android:id="@+id/UploadButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Upload Note"
+        android:text="Check"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
         android:layout_margin="20dp"
         android:padding="10dp"
-        android:background="@drawable/button_normal_ripple"
+        android:background="@drawable/btn_rounded_green_300"
          />
 
 </RelativeLayout>
