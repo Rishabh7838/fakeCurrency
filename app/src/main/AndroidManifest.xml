@@ -15,6 +15,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
+
         <provider
             android:name="android.support.v4.content.FileProvider"
             android:authorities="com.example.rish.detect_currency.provider"
@@ -25,13 +26,14 @@
                 android:resource="@xml/provider_paths" />
         </provider>
 
-        <activity android:name=".MainActivity"></activity>
-        <activity android:name=".LoginActivity">
-
-        </activity>
-        <activity android:name=".UserFormActivity"></activity>
+        <activity android:name=".MainActivity" />
+        <activity android:name=".LoginActivity"></activity>
+        <activity android:name=".UserFormActivity" />
         <activity android:name=".ImagePreview" />
-        <activity android:name=".SplashActivity">
+        <activity
+            android:name=".SplashActivity"
+            android:noHistory="true"
+            android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

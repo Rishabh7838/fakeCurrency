@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="@drawable/bgg">
+    android:background="@drawable/bg_splash">
     <LinearLayout
         android:id="@+id/l1"
         android:layout_width="match_parent"
@@ -14,11 +14,11 @@
         <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="@drawable/logo"/>
+            android:background="@drawable/logo_green_300"/>
     </LinearLayout>
     <LinearLayout
         android:id="@+id/l2"
-        android:layout_marginTop="135dp"
+        android:layout_marginTop="200dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical"
@@ -28,3 +28,4 @@
 
 
 </LinearLayout>
+
