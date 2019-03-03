@@ -1,6 +1,7 @@
 package com.example.rish.detect_currency;
 
 import android.Manifest;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
@@ -13,6 +14,7 @@ import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.FileProvider;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -29,6 +31,9 @@ import com.bumptech.glide.Glide;
 import com.example.rish.detect_currency.Modal.QueryResponse;
 import com.example.rish.detect_currency.services.RetrtofitInstance;
 import com.example.rish.detect_currency.services.SendPhotoService;
+import com.shashank.sony.fancydialoglib.Animation;
+import com.shashank.sony.fancydialoglib.FancyAlertDialog;
+import com.shashank.sony.fancydialoglib.Icon;
 
 import java.io.File;
 import java.io.IOException;
@@ -257,7 +262,30 @@ public class MainActivity extends AppCompatActivity {
                 return super.onOptionsItemSelected(item);
         }
     }
+public void dialog(String msg){
+//    new FancyGifDialog.Builder(this)
+//            .setTitle("Result")
+//            .setMessage(msg)
+//            .setPositiveBtnBackground("#FF4081")
+//            .setPositiveBtnText("Ok")
+//            .set
+//            .setGifResource(R.drawable.gif1)   //Pass your Gif here
+//            .isCancellable(true)
+//            .build();
+    new FancyAlertDialog.Builder(this)
+            .setTitle("Result")
+            .setBackgroundColor(Color.parseColor("#303F9F"))  //Don't pass R.color.colorvalue
+            .setMessage(msg)
+            .setNegativeBtnText("Cancel")
+            .setPositiveBtnBackground(Color.parseColor("#FF4081"))  //Don't pass R.color.colorvalue
+            .setPositiveBtnText("OK")
+            .setNegativeBtnBackground(Color.parseColor("#FFA9A7A8"))  //Don't pass R.color.colorvalue
+            .setAnimation(Animation.POP)
+            .isCancellable(true)
+            .setIcon(R.drawable.ic_star_border_black_24dp,Icon.Visible)
+            .build();
 
+}
     private void uploadImage(Uri resultUri){
         Log.d(TAG, "uploadImage:");
         uploadButton.setEnabled(false);
@@ -291,17 +319,19 @@ public class MainActivity extends AppCompatActivity {
                     public void onResponse(Call<QueryResponse> call, Response<QueryResponse> response) {
                         Log.e("Hello", "badiya");
                         progressBar.setVisibility(View.INVISIBLE);
-                        uploadButton.setEnabled(false);
+                        uploadButton.setEnabled(true);
                         rTextView.setVisibility(View.VISIBLE);
-                        Toast.makeText(MainActivity.this, "value = "+response.body().getValue(), Toast.LENGTH_SHORT).show();
+                        String output = response.body().getValue();
+                        Toast.makeText(MainActivity.this, "value = "+output, Toast.LENGTH_SHORT).show();
+                        dialog((Float.parseFloat(output)*100)+" % real.");
                     }
 
                     @Override
                     public void onFailure(Call<QueryResponse> call, Throwable t) {
                         progressBar.setVisibility(View.INVISIBLE);
-                        uploadButton.setEnabled(false);
+                        uploadButton.setEnabled(true);
                         Log.d(TAG, "onFailure:");
-                        Log.e("sorry", "babes = " + t.getMessage());
+                        Log.e("sorry", "babes= " + t.getMessage());
                     }
                 });
             }
@@ -332,6 +362,7 @@ public class MainActivity extends AppCompatActivity {
                         @Override
                         public void run() {
                             Toast.makeText(MainActivity.this, "Prediction="+prediction,Toast.LENGTH_SHORT).show();
+                            dialog((prediction*100)+" % real.");
                         }
                     });
 

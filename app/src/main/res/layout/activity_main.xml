@@ -20,8 +20,8 @@
         app:layout_constraintBottom_toTopOf="@id/NoteImage"
         android:layout_marginBottom="30dp"
         android:textAlignment="center"
-        android:textColor="@color/amber_700"
-        android:textStyle="bold"
+        android:textColor="@android:color/white"
+        android:textStyle="bold|italic"
         android:visibility="gone"/>
 
     <ImageView
