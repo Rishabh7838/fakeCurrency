@@ -1,7 +1,6 @@
 package com.example.rish.detect_currency;
 
 import android.Manifest;
-import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
@@ -23,6 +22,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
@@ -48,6 +48,7 @@ public class MainActivity extends AppCompatActivity {
     private Button uploadButton;
     private Uri uri = null;
     private PhotoDialog photoDialog;
+    private TextView rTextView;
     private ImageView noteImage;
     private Button offlineButton;
     private ProgressBar progressBar;
@@ -77,7 +78,7 @@ public class MainActivity extends AppCompatActivity {
         offlineButton = findViewById(R.id.offline_button);
         noteImage = findViewById(R.id.NoteImage);
         progressBar = findViewById(R.id.progressBar);
-
+        rTextView = findViewById(R.id.textview);
         uploadButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -259,7 +260,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void uploadImage(Uri resultUri){
         Log.d(TAG, "uploadImage:");
-
+        uploadButton.setEnabled(false);
         Bitmap image = null;
         try {
             image = MediaStore.Images.Media.getBitmap(this.getContentResolver(), resultUri);
@@ -290,12 +291,15 @@ public class MainActivity extends AppCompatActivity {
                     public void onResponse(Call<QueryResponse> call, Response<QueryResponse> response) {
                         Log.e("Hello", "badiya");
                         progressBar.setVisibility(View.INVISIBLE);
+                        uploadButton.setEnabled(false);
+                        rTextView.setVisibility(View.VISIBLE);
                         Toast.makeText(MainActivity.this, "value = "+response.body().getValue(), Toast.LENGTH_SHORT).show();
                     }
 
                     @Override
                     public void onFailure(Call<QueryResponse> call, Throwable t) {
                         progressBar.setVisibility(View.INVISIBLE);
+                        uploadButton.setEnabled(false);
                         Log.d(TAG, "onFailure:");
                         Log.e("sorry", "babes = " + t.getMessage());
                     }
@@ -311,6 +315,7 @@ public class MainActivity extends AppCompatActivity {
 
 
     private void classifyImage(Uri uri){
+        uploadButton.setEnabled(false);
         new AsyncTask<Uri, Void, Float>(){
             float prediction = 0;
             @Override
@@ -339,7 +344,9 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             protected void onPostExecute(Float aFloat) {
+                uploadButton.setEnabled(true);
                 progressBar.setVisibility(View.INVISIBLE);
+                rTextView.setVisibility(View.VISIBLE);
             }
         }.execute(uri);
     }
