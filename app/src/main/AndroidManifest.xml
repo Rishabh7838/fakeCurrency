@@ -27,7 +27,7 @@
         </provider>
 
         <activity android:name=".MainActivity" />
-        <activity android:name=".LoginActivity"></activity>
+        <activity android:name=".LoginActivity" />
         <activity android:name=".UserFormActivity" />
         <activity android:name=".ImagePreview" />
         <activity
