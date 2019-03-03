@@ -32,6 +32,7 @@ import com.example.rish.detect_currency.services.SendPhotoService;
 
 import java.io.File;
 import java.io.IOException;
+import java.security.Permissions;
 
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
@@ -76,6 +77,26 @@ public class MainActivity extends AppCompatActivity {
         offlineButton = findViewById(R.id.offline_button);
         noteImage = findViewById(R.id.NoteImage);
         progressBar = findViewById(R.id.progressBar);
+
+        uploadButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                progressBar.setVisibility(View.VISIBLE);
+                if(uri != null) {
+                    uploadImage(uri);
+                }
+            }
+        });
+
+        offlineButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                progressBar.setVisibility(View.VISIBLE);
+                if(uri !=null) {
+                    classifyImage(uri);
+                }
+            }
+        });
 
         ActivityCompat.requestPermissions(MainActivity.this, Permissions, 1);
         noteImage.setOnClickListener(new View.OnClickListener() {
@@ -178,21 +199,8 @@ public class MainActivity extends AppCompatActivity {
                         noteImage.setImageURI(uri);
                         uploadButton.setVisibility(View.VISIBLE);
                         offlineButton.setVisibility(View.VISIBLE);
-                        uploadButton.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                progressBar.setVisibility(View.VISIBLE);
-                                uploadImage(resultUri);
-                            }
-                        });
 
-                        offlineButton.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                progressBar.setVisibility(View.VISIBLE);
-                                classifyAsyncTask.execute(uri);
-                            }
-                        });
+
                        // newCoverPic = resultUri.toString();
                         //String caption = data.getStringExtra("Caption");
                         //String profile = userDetailsModel.ProfilePic;
@@ -301,49 +309,40 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    private AsyncTask<Uri, Void, Float> classifyAsyncTask = new AsyncTask<Uri, Void, Float>(){
-        float prediction = 0;
-        @Override
-        protected Float doInBackground(Uri... uris) {
 
-            try {
-//                if(bitmap!= null){
-//                    bitmap.recycle();
-//                }
-//                bitmap.recycle();
-                Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(),
-                        uris[0]);
+    private void classifyImage(Uri uri){
+        new AsyncTask<Uri, Void, Float>(){
+            float prediction = 0;
+            @Override
+            protected Float doInBackground(Uri... uris) {
 
+                try {
+                    Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(),
+                            uris[0]);
 
-//                binding.includeContentClassify.imageView.post(new Runnable() {
-//                    @Override
-//                    public void run() {
-//                        binding.includeContentClassify.imageView.setImageBitmap(bitmap);
-//                    }
-//                });
-                bitmap = scaleAndAddWhiteBorder(bitmap);
+                    bitmap = scaleAndAddWhiteBorder(bitmap);
 
-                prediction = classifier.classifyFrame(bitmap);
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        Toast.makeText(MainActivity.this, "Prediction="+prediction,Toast.LENGTH_SHORT).show();
-                    }
-                });
+                    prediction = classifier.classifyFrame(bitmap);
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            Toast.makeText(MainActivity.this, "Prediction="+prediction,Toast.LENGTH_SHORT).show();
+                        }
+                    });
 
-//                bitmap.recycle();
-            } catch (IOException e) {
-                e.printStackTrace();
-                Log.d(TAG, "doInBackground: Can't predict as failed to convert string to uri!");
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    Log.d(TAG, "doInBackground: Can't predict as failed to convert string to uri!");
+                }
+                return prediction;
             }
-            return prediction;
-        }
 
-        @Override
-        protected void onPostExecute(Float aFloat) {
-            progressBar.setVisibility(View.INVISIBLE);
-        }
-    };
+            @Override
+            protected void onPostExecute(Float aFloat) {
+                progressBar.setVisibility(View.INVISIBLE);
+            }
+        }.execute(uri);
+    }
 
     private Bitmap scaleAndAddWhiteBorder(Bitmap bmp){
         int height = bmp.getHeight();
