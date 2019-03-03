@@ -29,11 +29,10 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.example.rish.detect_currency.Modal.QueryResponse;
+import com.example.rish.detect_currency.Modal.RegistrationResponse;
 import com.example.rish.detect_currency.services.RetrtofitInstance;
 import com.example.rish.detect_currency.services.SendPhotoService;
-import com.shashank.sony.fancydialoglib.Animation;
-import com.shashank.sony.fancydialoglib.FancyAlertDialog;
-import com.shashank.sony.fancydialoglib.Icon;
+import com.yarolegovich.lovelydialog.LovelyInfoDialog;
 
 import java.io.File;
 import java.io.IOException;
@@ -46,9 +45,12 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
+import uk.co.deanwild.materialshowcaseview.MaterialShowcaseSequence;
+import uk.co.deanwild.materialshowcaseview.MaterialShowcaseView;
+import uk.co.deanwild.materialshowcaseview.ShowcaseConfig;
 
 public class MainActivity extends AppCompatActivity {
-    private static final int GALLERY =1,CAMERA = 0,PREVIEW=2 ;
+    private static final int GALLERY = 1, CAMERA = 0, PREVIEW = 2;
     private static final String TAG = MainActivity.class.getSimpleName();
     private Button uploadButton;
     private Uri uri = null;
@@ -62,8 +64,10 @@ public class MainActivity extends AppCompatActivity {
             Manifest.permission.WRITE_EXTERNAL_STORAGE,
             Manifest.permission.READ_EXTERNAL_STORAGE,
             Manifest.permission.CAMERA};
-    private Intent intent =null;
+    private Intent intent = null;
     private Classifier classifier;
+    private static final String SHOWCASE_ID = "seq1";
+    private static final String SHOWCASE_ID2 = "seq2";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -75,20 +79,23 @@ public class MainActivity extends AppCompatActivity {
         } catch (IOException e) {
             e.printStackTrace();
             Log.d(TAG, "onCreate: Failed to load model!");
-            Toast.makeText(this, "Failed to load Model!",Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Failed to load Model!", Toast.LENGTH_SHORT).show();
 //            finish();
         }
-            intent = getIntent();
+        intent = getIntent();
         uploadButton = findViewById(R.id.UploadButton);
         offlineButton = findViewById(R.id.offline_button);
         noteImage = findViewById(R.id.NoteImage);
         progressBar = findViewById(R.id.progressBar);
         rTextView = findViewById(R.id.textview);
+
+        tips();
+
         uploadButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 progressBar.setVisibility(View.VISIBLE);
-                if(uri != null) {
+                if (uri != null) {
                     uploadImage(uri);
                 }
             }
@@ -98,11 +105,13 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 progressBar.setVisibility(View.VISIBLE);
-                if(uri !=null) {
+                if (uri != null) {
                     classifyImage(uri);
                 }
             }
         });
+
+
 
         ActivityCompat.requestPermissions(MainActivity.this, Permissions, 1);
         noteImage.setOnClickListener(new View.OnClickListener() {
@@ -125,10 +134,9 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
-    public void ClickImageFromCamera(){
+
+    public void ClickImageFromCamera() {
         Intent CamIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
-//        File file = new File(Environment.getExternalStorageDirectory(),
-//                "file" + String.valueOf(System.currentTimeMillis()) + ".jpg");
         File file = null;
         String imageFileName = "IMG_" + String.valueOf(System.currentTimeMillis()) + "_";
         File storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
@@ -138,9 +146,10 @@ public class MainActivity extends AppCompatActivity {
                     ".jpg",         /* suffix */
                     storageDir      /* directory */
             );
-        }catch (IOException e){}
+        } catch (IOException e) {
+        }
 
-        if(file!=null) {
+        if (file != null) {
             Uri photoURI = FileProvider.getUriForFile(this, "com.example.rish.detect_currency.provider", file);
             getSharedPreferences("Temp", MODE_PRIVATE).edit().putString("Uri", photoURI.toString()).apply();
             CamIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
@@ -172,11 +181,13 @@ public class MainActivity extends AppCompatActivity {
                     // permission granted
                     //viewHolder.Camera.callOnClick();
 
-                } else { }
+                } else {
+                }
                 return;
             }
         }
     }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (resultCode == RESULT_OK) {
@@ -198,25 +209,18 @@ public class MainActivity extends AppCompatActivity {
                     ImageCropFunction();
                     break;
                 case PREVIEW:
-                    if(data!=null) {
+                    if (data != null) {
                         final Uri resultUri = Uri.parse(data.getStringExtra("Uri"));
                         uri = resultUri;
 //                        Glide.with(MainActivity.this).from(uri.toString()).into(noteImage);
                         noteImage.setImageURI(uri);
                         uploadButton.setVisibility(View.VISIBLE);
                         offlineButton.setVisibility(View.VISIBLE);
-
-
-                       // newCoverPic = resultUri.toString();
-                        //String caption = data.getStringExtra("Caption");
-                        //String profile = userDetailsModel.ProfilePic;
-                        //String username = userDetailsModel.UserName;
-                       /* Bundle bundle = data.getExtras();
-                        Bitmap image = bundle.getParcelable("Image");
-                        String caption = bundle.getString("Caption");
-                       */
-
-                    //    SaveData(image, caption, profile, username);
+                        tips2();
+                        if(intent.hasExtra("Activity")){
+                            offlineButton.setVisibility(View.GONE);
+                            uploadButton.setText("Upload Image");
+                        }
                     }
                     break;
                 default:
@@ -253,40 +257,33 @@ public class MainActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_login: {
-                Intent i = new Intent(MainActivity.this,LoginActivity.class);
+                Intent i = new Intent(MainActivity.this, LoginActivity.class);
                 startActivity(i);
-                finish();
                 return true;
             }
             default:
                 return super.onOptionsItemSelected(item);
         }
     }
-public void dialog(String msg){
-//    new FancyGifDialog.Builder(this)
-//            .setTitle("Result")
-//            .setMessage(msg)
-//            .setPositiveBtnBackground("#FF4081")
-//            .setPositiveBtnText("Ok")
-//            .set
-//            .setGifResource(R.drawable.gif1)   //Pass your Gif here
-//            .isCancellable(true)
-//            .build();
-    new FancyAlertDialog.Builder(this)
-            .setTitle("Result")
-            .setBackgroundColor(Color.parseColor("#303F9F"))  //Don't pass R.color.colorvalue
-            .setMessage(msg)
-            .setNegativeBtnText("Cancel")
-            .setPositiveBtnBackground(Color.parseColor("#FF4081"))  //Don't pass R.color.colorvalue
-            .setPositiveBtnText("OK")
-            .setNegativeBtnBackground(Color.parseColor("#FFA9A7A8"))  //Don't pass R.color.colorvalue
-            .setAnimation(Animation.POP)
-            .isCancellable(true)
-            .setIcon(R.drawable.ic_star_border_black_24dp,Icon.Visible)
-            .build();
 
-}
-    private void uploadImage(Uri resultUri){
+    public void dialog(boolean msg) {
+
+        if(msg)
+            new LovelyInfoDialog(this)
+                    .setTopColorRes(R.color.light_blue_900)
+                    .setIcon(R.drawable.ic_valid_24dp)
+                    .setMessage("VALID")
+                    .show();
+        else
+            new LovelyInfoDialog(this)
+                    .setTopColorRes(R.color.red_900)
+                    .setIcon(R.drawable.ic_fake_24dp)
+                    .setMessage("COUNTERFEIT")
+                    .show();
+
+    }
+
+    private void uploadImage(Uri resultUri) {
         Log.d(TAG, "uploadImage:");
         uploadButton.setEnabled(false);
         Bitmap image = null;
@@ -294,7 +291,41 @@ public void dialog(String msg){
             image = MediaStore.Images.Media.getBitmap(this.getContentResolver(), resultUri);
             File file = new File(resultUri.getPath());
 
-            if(intent.hasExtra("Activity")){
+            if (intent.hasExtra("Activity")) {
+
+                MultipartBody.Part filePart = MultipartBody.Part.createFormData("image", file.getName(), RequestBody.create(MediaType.parse("image/*"), file));
+
+                SendPhotoService sendPhotoService = RetrtofitInstance.getService();
+                Call<RegistrationResponse> call = sendPhotoService.uploadphoto(filePart);
+                call.enqueue(new Callback<RegistrationResponse>() {
+                    @Override
+                    public void onResponse(Call<RegistrationResponse> call, Response<RegistrationResponse> response) {
+                        Log.e("Hello", "badiya");
+                        progressBar.setVisibility(View.INVISIBLE);
+                        uploadButton.setEnabled(true);
+                        String output = response.body().getIsSuccessfull();
+                        if(output.equals("true")) {
+                            Toast.makeText(MainActivity.this, "successfully uploaded", Toast.LENGTH_SHORT).show();
+                            setResult(RESULT_OK);
+                            finish();
+                        }else
+                            Toast.makeText(MainActivity.this, "Failed to upload", Toast.LENGTH_SHORT).show();
+
+                    }
+
+                    @Override
+                    public void onFailure(Call<RegistrationResponse> call, Throwable t) {
+                        progressBar.setVisibility(View.INVISIBLE);
+                        uploadButton.setEnabled(true);
+                        Log.d(TAG, "onFailure:");
+                        Log.e("sorry", "babes= " + t.getMessage());
+                        Toast.makeText(MainActivity.this, "Failed to upload", Toast.LENGTH_SHORT).show();
+                    }
+                });
+
+
+
+
                 Toast.makeText(this, "Thanks for your valuable contribution", Toast.LENGTH_SHORT).show();
             } else {
                 Log.d(TAG, "uploadImage: uploading");
@@ -322,8 +353,11 @@ public void dialog(String msg){
                         uploadButton.setEnabled(true);
                         rTextView.setVisibility(View.VISIBLE);
                         String output = response.body().getValue();
-                        Toast.makeText(MainActivity.this, "value = "+output, Toast.LENGTH_SHORT).show();
-                        dialog((Float.parseFloat(output)*100)+" % real.");
+                        Toast.makeText(MainActivity.this, "value = " + output, Toast.LENGTH_SHORT).show();
+                        if(Float.parseFloat(output)>0.65f)
+                            dialog(true);
+                        else
+                            dialog(false);
                     }
 
                     @Override
@@ -344,10 +378,11 @@ public void dialog(String msg){
     }
 
 
-    private void classifyImage(Uri uri){
-        uploadButton.setEnabled(false);
-        new AsyncTask<Uri, Void, Float>(){
+    private void classifyImage(Uri uri) {
+        offlineButton.setEnabled(false);
+        new AsyncTask<Uri, Void, Float>() {
             float prediction = 0;
+
             @Override
             protected Float doInBackground(Uri... uris) {
 
@@ -361,8 +396,12 @@ public void dialog(String msg){
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            Toast.makeText(MainActivity.this, "Prediction="+prediction,Toast.LENGTH_SHORT).show();
-                            dialog((prediction*100)+" % real.");
+                            Toast.makeText(MainActivity.this, "Prediction=" + prediction, Toast.LENGTH_SHORT).show();
+                            if(prediction>0.65f)
+                                dialog(true);
+                            else
+                                dialog(false);
+//                            dialog((prediction * 100) + " % real.");
                         }
                     });
 
@@ -375,27 +414,74 @@ public void dialog(String msg){
 
             @Override
             protected void onPostExecute(Float aFloat) {
-                uploadButton.setEnabled(true);
+                offlineButton.setEnabled(true);
                 progressBar.setVisibility(View.INVISIBLE);
                 rTextView.setVisibility(View.VISIBLE);
             }
         }.execute(uri);
     }
 
-    private Bitmap scaleAndAddWhiteBorder(Bitmap bmp){
+    private Bitmap scaleAndAddWhiteBorder(Bitmap bmp) {
         int height = bmp.getHeight();
         int width = bmp.getWidth();
-        int biggerSide = height>width?height:width;
+        int biggerSide = height > width ? height : width;
 
-        Bitmap bmpWithBorder = Bitmap.createBitmap(biggerSide , biggerSide, bmp.getConfig());
+        Bitmap bmpWithBorder = Bitmap.createBitmap(biggerSide, biggerSide, bmp.getConfig());
         Canvas canvas = new Canvas(bmpWithBorder);
         canvas.drawColor(Color.WHITE);
 
-        canvas.drawBitmap(bmp, 0f, biggerSide/2f-height/2f, null);
+        canvas.drawBitmap(bmp, 0f, biggerSide / 2f - height / 2f, null);
 
         bmpWithBorder = Bitmap.createScaledBitmap(bmpWithBorder, Classifier.DIM_IMG_SIZE_X,
                 Classifier.DIM_IMG_SIZE_Y, false);
         return bmpWithBorder;
     }
 
+    private void tips() {
+        ShowcaseConfig config = new ShowcaseConfig();
+        config.setDelay(1000);
+        MaterialShowcaseSequence sequence = new MaterialShowcaseSequence(this, SHOWCASE_ID);
+
+        sequence.setOnItemShownListener(new MaterialShowcaseSequence.OnSequenceItemShownListener() {
+            @Override
+            public void onShow(MaterialShowcaseView itemView, int position) {
+            }
+        });
+
+        sequence.setConfig(config);
+
+        sequence.addSequenceItem(noteImage, "Click here to upload image from gallery or camera.", "GOT IT");
+
+        sequence.start();
+    }
+
+    private void tips2() {
+        ShowcaseConfig config = new ShowcaseConfig();
+        config.setDelay(1000);
+        MaterialShowcaseSequence sequence = new MaterialShowcaseSequence(this, SHOWCASE_ID2);
+
+        sequence.setOnItemShownListener(new MaterialShowcaseSequence.OnSequenceItemShownListener() {
+            @Override
+            public void onShow(MaterialShowcaseView itemView, int position) {
+            }
+        });
+
+        sequence.setConfig(config);
+
+        sequence.addSequenceItem(uploadButton, "Click here to check using latest algorithm online (slower)", "GOT IT");
+
+        sequence.addSequenceItem(
+                new MaterialShowcaseView.Builder(this)
+                        .setTarget(offlineButton)
+                        .setDismissText("GOT IT")
+                        .setContentText("Click here to check using offline algorithm (faster)")
+                        .build()
+        );
+        sequence.start();
+    }
+
+    @Override
+    public void onBackPressed() { }
 }
+
+

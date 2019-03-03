@@ -1,6 +1,10 @@
 package com.example.rish.detect_currency.services;
 
+import com.example.rish.detect_currency.Modal.LoginResponse;
 import com.example.rish.detect_currency.Modal.QueryResponse;
+import com.example.rish.detect_currency.Modal.RegistrationResponse;
+
+import java.util.HashMap;
 
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
@@ -19,4 +23,15 @@ public interface SendPhotoService {
     Call<QueryResponse> detectNote (@Part MultipartBody.Part filePart);
 
 
+    @POST("/login")
+        //Call<String> detectNote(@Field("value") String title);
+    Call<LoginResponse> loginUser (@Body() HashMap<String, String> user);
+
+
+    @POST("/login/register")
+    Call<RegistrationResponse> registerUser(@Body() HashMap<String, String> user);
+
+    @Multipart
+    @POST("/login/upload")
+    Call<RegistrationResponse> uploadphoto (@Part MultipartBody.Part filePart);
 }

@@ -69,7 +69,6 @@ public class ImagePreview extends AppCompatActivity {
             Window window = this.getWindow();
             window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
             window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
-            window.setStatusBarColor(ContextCompat.getColor(this, R.color.black));
         }
 
         showCaption = getIntent().getBooleanExtra("Caption", false);
@@ -235,7 +234,7 @@ public class ImagePreview extends AppCompatActivity {
             Image.setGuidelines(CropImageView.Guidelines.ON);
             Image.setAspectRatio(AspectX, AspectY);
             Drawable drawable = ContextCompat.getDrawable(getBaseContext(), R.drawable.ic_crop_black_24dp);
-            drawable.setColorFilter(new PorterDuffColorFilter(ContextCompat.getColor(getBaseContext(), R.color.colorPrimaryDark), PorterDuff.Mode.MULTIPLY));
+            drawable.setColorFilter(new PorterDuffColorFilter(ContextCompat.getColor(getBaseContext(), R.color.colorPrimary), PorterDuff.Mode.MULTIPLY));
             Crop.setImageDrawable(drawable);
         } else {
             Image.setShowCropOverlay(false);

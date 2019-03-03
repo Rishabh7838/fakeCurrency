@@ -29,7 +29,9 @@
             android:layout_alignParentStart="true"
             android:layout_centerVertical="true"
             android:padding="10dp"
-            android:scaleType="fitCenter" android:src="@drawable/back"/>
+            android:scaleType="fitCenter"
+            android:src="@drawable/back"
+            android:tint="@color/white_s07"/>
 
         <android.support.v7.widget.AppCompatImageButton
             android:id="@+id/Crop"
@@ -99,11 +101,11 @@
             android:id="@+id/Send"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_margin="5dp"
-            android:src="@drawable/send"
             android:backgroundTint="#f0f0f0"
-            app:elevation="5dp"
             android:longClickable="true"
-            app:layout_anchorGravity="top|right|end"/>
+            android:src="@drawable/send"
+            app:elevation="5dp"
+            android:layout_gravity="right"
+            android:layout_margin="20dp"/>
     </android.support.design.widget.CoordinatorLayout>
 </RelativeLayout>

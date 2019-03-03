@@ -52,7 +52,7 @@ public class SplashActivity extends AppCompatActivity {
                 startActivity(signInIntent);
                 // buttons[inew][jnew].setBackgroundColor(Color.BLACK);
             }
-        }, 3000);
+        }, 2000);
     }
 
 }

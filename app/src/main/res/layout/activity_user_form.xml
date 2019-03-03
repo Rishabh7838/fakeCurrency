@@ -7,6 +7,13 @@
     tools:context="com.example.rish.detect_currency.UserFormActivity"
     android:background="@color/blue_grey_900">
 
+    <ProgressBar
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/progressbar"
+        android:layout_gravity="center"
+        android:visibility="gone" />
+
     <LinearLayout
         android:gravity="center"
         android:layout_weight="1"
@@ -14,6 +21,8 @@
         android:layout_width="match_parent">
 
         <include layout="@layout/content_user_form"/>
+
+
     </LinearLayout>
 
 </android.support.design.widget.CoordinatorLayout>

@@ -13,7 +13,7 @@ import retrofit2.http.Part;
 
 public interface LoginService {
 
-        @POST(".")
+        @POST("/login")
             //Call<String> detectNote(@Field("value") String title);
         Call<LoginResponse> loginUser (@Body() LoginResponse loginResponse);
 }

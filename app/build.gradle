@@ -39,6 +39,7 @@ dependencies {
     implementation 'com.android.support:design:28.0.0'
     implementation 'com.theartofdev.edmodo:android-image-cropper:2.4.+'
     implementation 'org.tensorflow:tensorflow-lite:+'
-    implementation 'com.github.Shashank02051997:FancyAlertDialog-Android:0.1'
-
+    implementation 'com.github.mpetlyuk:initial_tips:0.0.3'
+    implementation 'com.github.deano2390:MaterialShowcaseView:1.2.0'
+    implementation 'com.yarolegovich:lovely-dialog:1.1.0'
 }
